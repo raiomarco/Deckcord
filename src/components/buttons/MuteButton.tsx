@@ -1,8 +1,8 @@
-import { DialogButton, ServerAPI } from "decky-frontend-lib";
-import { useDeckcordState } from "../../hooks/useDeckcordState";
+import { DialogButton, type ServerAPI } from "decky-frontend-lib";
 import { FaMicrophoneAlt, FaMicrophoneAltSlash } from "react-icons/fa";
+import { useDeckcordState } from "../../hooks/useDeckcordState";
 
-export function MuteButton(props: { serverAPI: ServerAPI; }) {
+export function MuteButton(props: { serverAPI: ServerAPI }) {
   const state = useDeckcordState(props.serverAPI);
   if (state?.me?.is_muted) {
     return (

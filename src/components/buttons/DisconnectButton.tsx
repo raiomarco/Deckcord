@@ -1,8 +1,7 @@
-import { DialogButton, ServerAPI } from "decky-frontend-lib";
+import { DialogButton, type ServerAPI } from "decky-frontend-lib";
 import { FaPlug } from "react-icons/fa";
 
-export function DisconnectButton(props: { serverAPI: ServerAPI; }) {
-
+export function DisconnectButton(props: { serverAPI: ServerAPI }) {
   return (
     <DialogButton
       onClick={() => {

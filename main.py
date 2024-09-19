@@ -40,12 +40,14 @@ async def stream_watcher(stream, is_err=False):
         else:
             logger.debug(line)
 
+
 async def initialize():
     tab = await create_discord_tab()
     await setup_discord_tab(tab)
     await boot_discord(tab)
-    
+
     create_task(watchdog(tab))
+
 
 async def watchdog(tab: Tab):
     while True:
@@ -64,6 +66,7 @@ async def watchdog(tab: Tab):
             break
         except:
             await sleep(1)
+
 
 class Plugin:
     server = Application()
@@ -86,7 +89,7 @@ class Plugin:
             [
                 get("/openkb", Plugin._openkb),
                 get("/socket", Plugin._websocket_handler),
-                get("/frontend_socket", Plugin._frontend_socket_handler)
+                get("/frontend_socket", Plugin._frontend_socket_handler),
             ]
         )
         for r in list(Plugin.server.router.routes())[:-1]:
@@ -134,9 +137,9 @@ class Plugin:
         ws = WebSocketResponse(max_msg_size=0)
         await ws.prepare(request)
         await Plugin.evt_handler.main(ws)
-    
 
     last_ws: WebSocketResponse = None
+
     async def _frontend_socket_handler(request):
         if Plugin.last_ws:
             await Plugin.last_ws.close()
@@ -154,8 +157,10 @@ class Plugin:
                 {"title": notification["title"], "body": notification["body"]}
             )
             await Plugin.shared_js_tab.ensure_open()
-            await Plugin.shared_js_tab.evaluate(f"window.DECKCORD.dispatchNotification(JSON.parse('{payload}'));")
-    
+            await Plugin.shared_js_tab.evaluate(
+                f"window.DECKCORD.dispatchNotification(JSON.parse('{payload}'));"
+            )
+
     async def connect_ws(*args):
         await Plugin.shared_js_tab.ensure_open()
         await Plugin.shared_js_tab.evaluate(f"window.DECKCORD.connectWs()")
@@ -201,7 +206,7 @@ class Plugin:
 
     async def get_screen_bounds(plugin):
         return await plugin.evt_handler.api.get_screen_bounds()
-    
+
     async def go_live(plugin):
         await plugin.evt_handler.ws.send_json({"type": "$golive", "stop": False})
 

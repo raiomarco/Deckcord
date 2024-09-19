@@ -3,7 +3,10 @@
   "author": "marios8543",
   "flags": [],
   "publish": {
-    "tags": ["discord", "chat"],
+    "tags": [
+      "discord",
+      "chat"
+    ],
     "description": "Easy access to Discord",
     "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
   }

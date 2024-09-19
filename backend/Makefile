@@ -1,4 +1,4 @@
-# This is the default target, which will be built when 
+# This is the default target, which will be built when
 # you invoke make
 # Taken from https://github.com/marissa999/decky-recorder
 current_dir = $(shell pwd)

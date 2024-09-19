@@ -1,9 +1,9 @@
-import { ServerAPI } from "decky-frontend-lib";
+import type { ServerAPI } from "decky-frontend-lib";
 import { useDeckcordState } from "../hooks/useDeckcordState";
 
-export function VoiceChatChannel(props: { serverAPI: ServerAPI; }) {
+export function VoiceChatChannel(props: { serverAPI: ServerAPI }) {
   const state = useDeckcordState(props.serverAPI);
-  if (state?.vc == undefined) return (<div></div>);
+  if (state?.vc == undefined) return <div></div>;
   return (
     <div style={{ marginTop: "-30px" }}>
       <h3>{state?.vc?.channel_name}</h3>
@@ -12,9 +12,9 @@ export function VoiceChatChannel(props: { serverAPI: ServerAPI; }) {
   );
 }
 
-export function VoiceChatMembers(props: { serverAPI: ServerAPI; }) {
+export function VoiceChatMembers(props: { serverAPI: ServerAPI }) {
   const state = useDeckcordState(props.serverAPI);
-  if (state?.vc?.users == undefined) return (<div></div>);
+  if (state?.vc?.users == undefined) return <div></div>;
   const members = [];
   for (const user of state?.vc?.users) {
     members.push(

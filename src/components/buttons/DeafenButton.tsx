@@ -1,8 +1,8 @@
-import { DialogButton, ServerAPI } from "decky-frontend-lib";
-import { useDeckcordState } from "../../hooks/useDeckcordState";
+import { DialogButton, type ServerAPI } from "decky-frontend-lib";
 import { FaHeadphonesAlt, FaSlash } from "react-icons/fa";
+import { useDeckcordState } from "../../hooks/useDeckcordState";
 
-export function DeafenButton(props: { serverAPI: ServerAPI; }) {
+export function DeafenButton(props: { serverAPI: ServerAPI }) {
   const state = useDeckcordState(props.serverAPI);
   if (!state?.me?.is_deafened) {
     return (

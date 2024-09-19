@@ -1,10 +1,10 @@
-import { DialogButton, ServerAPI } from "decky-frontend-lib";
-import { useDeckcordState } from "../../hooks/useDeckcordState";
+import { DialogButton, type ServerAPI } from "decky-frontend-lib";
 import { FaVideo } from "react-icons/fa";
+import { useDeckcordState } from "../../hooks/useDeckcordState";
 
-export function GoLiveButton(props: { serverAPI: ServerAPI; }) {
+export function GoLiveButton(props: { serverAPI: ServerAPI }) {
   const state = useDeckcordState(props.serverAPI);
-  if (state?.vc == null || state?.vc == undefined) return (<div></div>);
+  if (state?.vc == null || state?.vc == undefined) return <div></div>;
   if (Object.keys(state?.vc).length > 0) {
     if (!state?.me?.is_live) {
       return (

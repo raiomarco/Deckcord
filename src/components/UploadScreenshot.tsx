@@ -1,4 +1,9 @@
-import { DialogButton, Dropdown, DropdownOption, ServerAPI } from "decky-frontend-lib";
+import {
+  DialogButton,
+  Dropdown,
+  type DropdownOption,
+  type ServerAPI,
+} from "decky-frontend-lib";
 import { useEffect, useMemo, useState } from "react";
 
 function urlContentToDataUri(url: string) {
@@ -7,7 +12,7 @@ function urlContentToDataUri(url: string) {
     .then(
       (blob) =>
         new Promise((callback) => {
-          let reader = new FileReader();
+          const reader = new FileReader();
           reader.onload = function () {
             callback(this.result);
           };
@@ -16,7 +21,7 @@ function urlContentToDataUri(url: string) {
     );
 }
 
-export function UploadScreenshot(props: { serverAPI: ServerAPI; }) {
+export function UploadScreenshot(props: { serverAPI: ServerAPI }) {
   const [screenshot, setScreenshot] = useState<any>();
   const [selectedChannel, setChannel] = useState<any>();
   const [uploadButtonDisabled, setUploadButtonDisabled] =
@@ -24,13 +29,16 @@ export function UploadScreenshot(props: { serverAPI: ServerAPI; }) {
   const channels = useMemo((): DropdownOption[] => [], []);
 
   useEffect(() => {
-    props.serverAPI.callPluginMethod("get_last_channels", {}).then(res => {
+    props.serverAPI.callPluginMethod("get_last_channels", {}).then((res) => {
       if ("error" in (res.result as {})) return;
       const channelList: {} = res.result;
-      for (const channelId in channelList) channels.push({ data: channelId, label: channelList[channelId] });
+      for (const channelId in channelList)
+        channels.push({ data: channelId, label: channelList[channelId] });
       setChannel(channels[0].data);
     });
-    SteamClient.Screenshots.GetLastScreenshotTaken().then((res: any) => setScreenshot(res));
+    SteamClient.Screenshots.GetLastScreenshotTaken().then((res: any) =>
+      setScreenshot(res)
+    );
   }, []);
 
   return (

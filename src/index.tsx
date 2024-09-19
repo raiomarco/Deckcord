@@ -1,37 +1,37 @@
 import {
-  definePlugin,
+  Focusable,
   PanelSection,
   PanelSectionRow,
-  ServerAPI,
-  staticClasses,
   Router,
+  type ServerAPI,
+  definePlugin,
   sleep,
-  Focusable,
+  staticClasses,
 } from "decky-frontend-lib";
-import { VFC } from "react";
+import type { VFC } from "react";
 import { FaDiscord } from "react-icons/fa";
 
-import { patchMenu } from "./patches/menuPatch";
 import { DiscordTab } from "./components/DiscordTab";
 import {
-  useDeckcordState,
-  eventTarget,
   DeckcordEvent,
+  WebRTCEvent,
+  eventTarget,
   isLoaded,
   isLoggedIn,
-  WebRTCEvent,
+  useDeckcordState,
 } from "./hooks/useDeckcordState";
+import { patchMenu } from "./patches/menuPatch";
 
-import { MuteButton } from "./components/buttons/MuteButton";
-import { DeafenButton } from "./components/buttons/DeafenButton";
-import { DisconnectButton } from "./components/buttons/DisconnectButton";
-import { GoLiveButton } from "./components/buttons/GoLiveButton";
-import { PushToTalkButton } from "./components/buttons/PushToTalk";
+import { UploadScreenshot } from "./components/UploadScreenshot";
 import {
   VoiceChatChannel,
   VoiceChatMembers,
 } from "./components/VoiceChatViews";
-import { UploadScreenshot } from "./components/UploadScreenshot";
+import { DeafenButton } from "./components/buttons/DeafenButton";
+import { DisconnectButton } from "./components/buttons/DisconnectButton";
+import { GoLiveButton } from "./components/buttons/GoLiveButton";
+import { MuteButton } from "./components/buttons/MuteButton";
+import { PushToTalkButton } from "./components/buttons/PushToTalk";
 
 declare global {
   interface Window {
@@ -133,7 +133,7 @@ export default definePlugin((serverApi: ServerAPI) => {
       console.log("Dispatching Deckcord notification: ", payload);
       serverApi.toaster.toast(payload);
     },
-    MIC_PEER_CONNECTION: undefined
+    MIC_PEER_CONNECTION: undefined,
   };
 
   const setState = (data: any) => {
@@ -161,11 +161,16 @@ export default definePlugin((serverApi: ServerAPI) => {
       if (peerConnection) peerConnection.close();
       peerConnection = new RTCPeerConnection();
       window.DECKCORD.MIC_PEER_CONNECTION = peerConnection;
-      const localStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true,});
+      const localStream = await navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true,
+      });
       localStream.getTracks().forEach((track) => {
         peerConnection.addTrack(track, localStream);
       });
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(data.offer)
+      );
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
       console.log("Deckcord: Sending RTC Answer");
@@ -198,7 +203,7 @@ export default definePlugin((serverApi: ServerAPI) => {
   let lastDisplayIsExternal = false;
   (async () => {
     await isLoaded();
-    
+
     settingsChangeUnregister = SteamClient.Settings.RegisterForSettingsChanges(
       async (settings: any) => {
         if (settings.bDisplayIsExternal != lastDisplayIsExternal) {

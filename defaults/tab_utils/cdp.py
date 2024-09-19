@@ -9,6 +9,7 @@ from asyncio.exceptions import TimeoutError
 
 BASE_ADDRESS = "http://127.0.0.1:8080"
 
+
 class Tab:
     cmd_id = 0
 
@@ -20,7 +21,7 @@ class Tab:
 
         self.websocket = None
         self.client = None
-    
+
     async def ensure_open(self):
         if self.websocket.closed:
             await self.open_websocket()
@@ -38,7 +39,7 @@ class Tab:
             data = message.json()
             yield data
         await self.close_websocket()
-            
+
     async def _send_devtools_cmd(self, dc, receive=True):
         if self.websocket:
             self.cmd_id += 1
@@ -56,9 +57,12 @@ class Tab:
             if manage_socket:
                 await self.open_websocket()
 
-            res = await self._send_devtools_cmd({
-                "method": "Page.close",
-            }, False)
+            res = await self._send_devtools_cmd(
+                {
+                    "method": "Page.close",
+                },
+                False,
+            )
 
         finally:
             if manage_socket:
@@ -69,69 +73,72 @@ class Tab:
         """
         Enables page domain notifications.
         """
-        await self._send_devtools_cmd({
-            "method": "Page.enable",
-        }, False)
+        await self._send_devtools_cmd(
+            {
+                "method": "Page.enable",
+            },
+            False,
+        )
 
     async def evaluate(self, js, wait=False):
-        return await self._send_devtools_cmd({
-            "method": "Runtime.evaluate",
-            "params": {
-                "expression": js
-            }
-        }, wait)
+        return await self._send_devtools_cmd(
+            {"method": "Runtime.evaluate", "params": {"expression": js}}, wait
+        )
 
-    async def set_request_interception(self, patterns = None):
-        return await self._send_devtools_cmd({
-            "method": "Network.setRequestInterception",
-            "params": {
-                "patterns": patterns
+    async def set_request_interception(self, patterns=None):
+        return await self._send_devtools_cmd(
+            {
+                "method": "Network.setRequestInterception",
+                "params": {"patterns": patterns},
             }
-        })
+        )
 
-    async def enable_fetch(self, patterns = None):
-        return await self._send_devtools_cmd({
-            "method": "Fetch.enable",
-            "params": {
-                "patterns": patterns
-            }
-        }, False)
+    async def enable_fetch(self, patterns=None):
+        return await self._send_devtools_cmd(
+            {"method": "Fetch.enable", "params": {"patterns": patterns}}, False
+        )
 
     async def enable_net(self):
-        return await self._send_devtools_cmd({
-            "method": "Network.enable"
-        })
+        return await self._send_devtools_cmd({"method": "Network.enable"})
 
     async def disable_net(self):
-        return await self._send_devtools_cmd({
-            "method": "Network.disable"
-        })
+        return await self._send_devtools_cmd({"method": "Network.disable"})
 
     async def disable_fetch(self):
-        return await self._send_devtools_cmd({
-            "method": "Fetch.disable",
-        })
+        return await self._send_devtools_cmd(
+            {
+                "method": "Fetch.disable",
+            }
+        )
 
     async def continue_request(self, request_id, url=None):
-        return await self._send_devtools_cmd({
-            "method": "Fetch.continueRequest",
-            "params": {
-                "requestId": request_id,
-                "url": url
-                # "interceptResponse": intercept_response
-            }
-        }, False)
+        return await self._send_devtools_cmd(
+            {
+                "method": "Fetch.continueRequest",
+                "params": {
+                    "requestId": request_id,
+                    "url": url,
+                    # "interceptResponse": intercept_response
+                },
+            },
+            False,
+        )
 
-    async def fulfill_request(self, request_id, response_code=None, response_headers=None, body=None):
-        return await self._send_devtools_cmd({
-            "method": "Fetch.fulfillRequest",
-            "params": {
-                "requestId": request_id,
-                "responseCode": response_code,
-                "responseHeaders": response_headers,
-                "body": body
-            }
-        }, False)
+    async def fulfill_request(
+        self, request_id, response_code=None, response_headers=None, body=None
+    ):
+        return await self._send_devtools_cmd(
+            {
+                "method": "Fetch.fulfillRequest",
+                "params": {
+                    "requestId": request_id,
+                    "responseCode": response_code,
+                    "responseHeaders": response_headers,
+                    "body": body,
+                },
+            },
+            False,
+        )
 
 
 async def get_tabs() -> List[Tab]:
@@ -159,12 +166,14 @@ async def get_tabs() -> List[Tab]:
     else:
         raise Exception(f"/json did not return 200. {await res.text()}")
 
+
 async def get_tab_lambda(test) -> Tab:
     tabs = await get_tabs()
     tab = next((i for i in tabs if test(i)), None)
     if not tab:
         raise ValueError(f"Tab not found by lambda")
     return tab
+
 
 async def get_tab(tab_name) -> Tab:
     tabs = await get_tabs()
